@@ -1,0 +1,37 @@
+Understanding the business terminologies in the problem statement is crucial for grasping the issues described in the media spend analysis. Here’s a breakdown of the key terms and concepts:
+
+1. Media Spend Analysis
+This refers to analyzing the money spent on various marketing channels (e.g., TV, Facebook, Instagram) and assessing their impact on sales or other business outcomes.
+The goal is to determine which channels are most effective and optimize the marketing budget.
+
+2. Marketing Channels
+Offline Channels: Traditional marketing channels like TV, Radio, and Print advertising.
+Online Channels: Digital platforms like Facebook, Instagram, and Google Ads.
+These channels are different in terms of reach, targeting, and measurement of results.
+
+3. Adstock Effect
+This is a concept in marketing that refers to the delayed and cumulative impact of advertising on sales over time.
+For example, a TV ad might not immediately lead to sales but could influence consumer behavior days or weeks later.
+Without accounting for the adstock effect, the analysis overlooks the long-term benefits of marketing efforts.
+
+4. Saturation Curve
+Marketing efforts often exhibit diminishing returns at higher levels of spending. This is called a saturation effect.
+For example, doubling the ad spend on Facebook might not double the sales—it might only increase sales by a small amount.
+A saturation curve models this behavior, showing that beyond a certain point, additional spending has minimal impact.
+
+5. Interaction Terms
+Interaction terms represent the combined effect of multiple marketing channels on sales.
+For instance, an ad campaign on TV combined with a Facebook campaign might have a greater impact than if they were run separately.
+Ignoring interaction terms means the analysis assumes all channels work independently, which is often not the case.
+
+6. Decay Rates
+The decay rate measures how quickly the impact of advertising diminishes over time.
+For example, the effect of a radio ad might last for a week, but its influence will gradually fade. If decay rates are not modeled, the analysis may overestimate the future impact of past advertising.
+
+7. Inflated Predictions
+Inflated predictions occur when the model overestimates the effectiveness of marketing channels due to improper handling of key factors (e.g., no adstock effect, no saturation curve).
+This can lead to poor decision-making, such as spending too much on channels that don't actually provide proportional sales growth.
+ 
+8. Strategic Objectives
+These are the high-level goals of the business, such as increasing sales, improving brand awareness, or optimizing marketing budget allocation.
+A flawed media spend analysis can hinder these objectives by misallocating resources and failing to provide actionable insights.

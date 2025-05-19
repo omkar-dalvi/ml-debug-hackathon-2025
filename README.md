@@ -39,4 +39,10 @@ Azure Databricks
 * Node Type: Standard_D4ds_v5 (4 cores, 16 GB RAM)
 * Terminal Shutdown: 30 mins
 
+## Activate Kernel 
+
+`uv run ipython kernel install --user --name=mldebug`
+
+`uv run --with jupyter jupyter lab`
+
 

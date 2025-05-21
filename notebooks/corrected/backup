@@ -1,0 +1,180 @@
+In a short and crisp points, explain the bug in the plot. 
+
+There was a difference in datetime, as 
+
+
+
+Focus on identifying the issues caused by misaligned time frequencies and scale differences, and how these issues distort the analysis
+
+
+
+
+
+
+
+
+
+# Calculate total daily sales to match with marketing data
+daily_sales = sales_data.groupby('date')['sales_quantity'].sum().reset_index()
+daily_sales.rename(columns={'sales_quantity': 'total_sales'}, inplace=True)
+# Aggregate weekly sales for comparison with weekly media spend
+weekly_sales = daily_sales.copy()
+weekly_sales["week"] = (
+    pd.to_datetime(weekly_sales["date"]).dt.to_period("W").dt.start_time
+)
+weekly_sales = weekly_sales.groupby("week")["total_sales"].sum().reset_index()
+
+# Ensure the 'date' column is in datetime format
+weekly_sales["week"] = pd.to_datetime(weekly_sales["week"])
+# Set 'date' as the index
+weekly_sales.set_index("week", inplace=True)
+
+# Resample the data to start the weekly window from 2023-01-01
+start_date = pd.to_datetime("2023-01-01")
+weekly_sales = weekly_sales.resample(
+    "W-SUN", label="left", offset="1D", origin=start_date
+).sum()
+
+# Reset the index
+weekly_sales.reset_index(inplace=True)
+# Convert 'date' column to datetime
+weekly_sales["week"] = pd.to_datetime(weekly_sales["week"])
+
+# Set 'date' as the index for easier manipulation
+weekly_sales.set_index("week", inplace=True)
+# Shift the data by 1 week
+df_shifted = weekly_sales.shift(periods=1, freq="W")
+
+# If you want to reset the index for easier viewing
+df_shifted.reset_index(inplace=True)
+# Merge digital data with daily sales for analysis
+digital_sales = pd.merge(online_marketing, daily_sales, on='date', how='left')
+
+# Convert the 'date' column to datetime
+digital_sales["date"] = pd.to_datetime(digital_sales["date"])
+
+# Set the 'date' column as the index
+digital_sales.set_index("date", inplace=True)
+
+# Resample data weekly and sum spend for each channel
+weekly_spend = (
+    digital_sales.groupby("channel").resample("W").sum()["spend"].reset_index()
+)
+def plot_corrected_time_series_online(online_marketing, weekly_sales):
+    # Step 1: Pivot media spend data
+    online_data_pivoted = online_marketing.pivot_table(
+        index="date", columns="channel", values="spend", aggfunc="sum"
+    )
+    online_data_pivoted.index = pd.to_datetime(
+        online_data_pivoted.index
+    )  # Ensure datetime index
+
+    # Step 2: Resample sales data to weekly frequency
+    weekly_sales["week"] = pd.to_datetime(
+        weekly_sales["week"]
+    )  # Ensure datetime format
+    weekly_sales_resampled = weekly_sales.set_index("week").resample("W").sum()
+
+    # Step 3: Normalize data using log transformation
+    offline_data_normalized = np.log1p(
+        online_data_pivoted
+    )  # Log transformation for media spend
+    sales_normalized = np.log1p(
+        weekly_sales_resampled["total_sales"]
+    )  # Log transformation for sales
+
+    # Step 4: Plot corrected time series
+    plt.figure(figsize=(12, 8))
+
+    # Plot normalized media spend
+    for channel in offline_data_normalized.columns:
+        plt.plot(
+            offline_data_normalized.index,
+            offline_data_normalized[channel],
+            label=f"{channel} Spend (Log Normalized)",
+        )
+
+    # Plot normalized sales
+    plt.plot(
+        sales_normalized.index,
+        sales_normalized,
+        label="Sales (Log Normalized)",
+        linestyle="--",
+        color="black",
+    )
+
+    # Add titles and labels
+    plt.title("Corrected Media Spend and Sales Over Time (Log Normalized)", fontsize=14)
+    plt.xlabel("Week", fontsize=12)
+    plt.ylabel("Log Normalized Amount", fontsize=12)
+    plt.legend()
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
+
+plot_corrected_time_series_online(weekly_spend, df_shifted)
+
+
+
+# Merge weekly media spend with weekly sales
+media_sales = pd.merge(offline_marketing, df_shifted, on='week', how='left')
+def plot_corrected_time_series_offline(offline_marketing, weekly_sales):
+    # Step 1: Pivot media spend data
+    offline_data_pivoted = offline_marketing.pivot_table(
+        index="week", columns="channel", values="spend", aggfunc="sum"
+    )
+    offline_data_pivoted.index = pd.to_datetime(
+        offline_data_pivoted.index
+    )  # Ensure datetime index
+
+    # Step 2: Resample sales data to weekly frequency
+    weekly_sales["week"] = pd.to_datetime(
+        weekly_sales["week"]
+    )  # Ensure datetime format
+    weekly_sales_resampled = weekly_sales.set_index("week").resample("W").sum()
+
+    # Step 3: Normalize data using log transformation
+    offline_data_normalized = np.log1p(
+        offline_data_pivoted
+    )  # Log transformation for media spend
+    sales_normalized = np.log1p(
+        weekly_sales_resampled["total_sales"]
+    )  # Log transformation for sales
+
+    # Step 4: Plot corrected time series
+    plt.figure(figsize=(12, 8))
+
+    # Plot normalized media spend
+    for channel in offline_data_normalized.columns:
+        plt.plot(
+            offline_data_normalized.index,
+            offline_data_normalized[channel],
+            label=f"{channel} Spend (Log Normalized)",
+        )
+
+    # Plot normalized sales
+    plt.plot(
+        sales_normalized.index,
+        sales_normalized,
+        label="Sales (Log Normalized)",
+        linestyle="--",
+        color="black",
+    )
+
+    # Add titles and labels
+    plt.title("Corrected Media Spend and Sales Over Time (Log Normalized)", fontsize=14)
+    plt.xlabel("Week", fontsize=12)
+    plt.ylabel("Log Normalized Amount", fontsize=12)
+    plt.legend()
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
+
+plot_corrected_time_series_offline(offline_marketing, df_shifted)
+
+
+
+
+
+
+

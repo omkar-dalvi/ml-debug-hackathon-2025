@@ -177,3 +177,5 @@ infra/.terraform/*
 
 infra/.terraform.lock.hcl
 
+models/*
+mlruns/*

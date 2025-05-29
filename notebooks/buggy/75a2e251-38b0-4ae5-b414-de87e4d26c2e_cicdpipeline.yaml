@@ -1,0 +1,26 @@
+
+trigger:
+  branches:
+    include:
+      - main
+jobs:
+  - job: Test_Model
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.x'
+      - script: |
+          echo "Test the model"
+          python test_model.py
+        displayName: 'Test the model'
+  - job: Deploy_Model
+    dependsOn: Train_Model
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - script: |
+          echo "Deploying the model"
+          python deploy_model.py
+        displayName: 'Deploy the model'

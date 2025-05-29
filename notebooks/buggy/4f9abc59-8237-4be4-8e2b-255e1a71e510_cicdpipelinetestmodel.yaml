@@ -1,0 +1,18 @@
+
+trigger:
+  branches:
+    include:
+      - main
+jobs:
+  - job: Test_Model
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - task: AzureKeyVault@2
+        inputs:
+          azureKeyVault: 'MyKeyVault'
+          secretsFilter: 'MODEL_DEPLOYMENT_TOKEN'
+      - script: |
+          echo "Testing the model"
+          python test_model.py
+        displayName: 'Test the model'

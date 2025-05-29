@@ -1,0 +1,19 @@
+
+trigger:
+  branches:
+    include:
+      - main
+jobs:
+  - job: Deploy_Model
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - task: AzureKeyVault@2
+        inputs:
+          azureKeyVault: 'MyKeyVault'
+          secretsFilter: 'MODEL_DEPLOYMENT_TOKEN'
+      - script: |
+          echo "Deploying the model with token"
+          echo "TOKEN: {MODEL_DEPLOYMENT_TOKEN}"
+          python deploy_model.py token {MODEL_DEPLOYMENT_TOKEN}
+        displayName: 'Deploy the model with token'

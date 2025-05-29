@@ -1,0 +1,23 @@
+
+trigger:
+  branches:
+    include:
+      - main
+jobs:
+  - job: Pre_Commit_Check
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - script: |
+          echo "Running pre-commit checks"
+          pre-commit run --all-files
+        displayName: 'Run Pre-Commit Checks'
+  - job: Deploy_Model
+    dependsOn: Pre_Commit_Check
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - script: |
+          echo "Deploying the model"
+          python deploy_model.py
+        displayName: 'Deploy the model'

@@ -1,0 +1,23 @@
+
+trigger:
+  branches:
+    include:
+      - main
+jobs:
+  - job: Run_Unit_Tests
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - script: |
+          echo "Running unit tests"
+          python -m unittest test_model.py
+        displayName: 'Run Unit Tests'
+  - job: Deploy_Model
+    dependsOn: Run_Unit_Tests
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - script: |
+          echo "Deploying the model"
+          python deploy_model.py
+        displayName: 'Deploy the model'

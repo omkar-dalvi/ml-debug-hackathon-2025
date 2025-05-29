@@ -21,13 +21,25 @@ resource "azurerm_storage_account" "amlstorageaccount" {
   account_replication_type = "LRS"
 }
 
+resource "azurerm_container_registry" "amlcontainerregistry" {
+  name                = "${var.app}${var.env}amlacr"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  sku                 = "Basic"
+
+  identity {
+    type = "SystemAssigned"
+  }
+}
+
 resource "azurerm_machine_learning_workspace" "aml" {
-  name                    = "${var.app}${var.env}aml"
+  name                    = "${var.app}${var.env}amlv2"
   location                = var.location
   resource_group_name     = var.resource_group_name
   application_insights_id = azurerm_application_insights.amlapplicationinsights.id
   key_vault_id            = azurerm_key_vault.amlkeyvault.id
   storage_account_id      = azurerm_storage_account.amlstorageaccount.id
+  container_registry_id   = azurerm_container_registry.amlcontainerregistry.id
 
   identity {
     type = "SystemAssigned"
